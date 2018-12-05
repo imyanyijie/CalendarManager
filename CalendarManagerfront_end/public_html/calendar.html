@@ -156,6 +156,7 @@ and open the template in the editor.
             document.getElementById("CalendarView").innerHTML = "";
             document.getElementById("DailyView").innerHTML = "";
             var startDay = new Date(selectedDate);
+            console.log(startDay);
             var startMonth = startDay.getMonth() + 1;
             var startYear = startDay.getYear() + 1900;
             var startday = startDay.getDate();
@@ -189,34 +190,46 @@ and open the template in the editor.
                     var cell = row.insertCell(4);
                     cell.innerHTML = "<b>Friday</b>";
                     var elipse = parseInt((maxDay - startday) / 7);
-
-                    console.log("the number of row is " + elipse);
-                    var day = startDay;
+                    
+                    var day = new Date(startDay);
+                    console.log("start day is "+day);
                     for (var i = 0; i <= elipse; i++) {
                         var row = document.createElement("tr");
                         for (var j = 0; j < 7; j++) {
                             var comparetorDay = parseInt(day.getDay() % 7)
                             if (comparetorDay !== 0) {
                                 if (comparetorDay !== 6) {
-                                    var count = 0;
-                                    for (var k = 0; k < meetingList.length; k++) {
-                                        var meetingDate_String = meetingList[k].meetingDate;
-                                        var meetingStringTemp = meetingDate_String.split("T");
-                                        var meeting_String = meetingStringTemp[0].replace("-", "/");
-                                        var meetingDate = new Date(meeting_String);
-                                        console.log(meetingDate.getDate() == day.getDate());
-                                        console.log(meeting_String);
-                                        console.log(day.getDate())
-                                        if (meetingDate.getDate() == day.getDate()) {
-                                            count++;
-                                            console.log(count);
+                                    var timeslotDate = dayConversion(day);
+                                    var dayFlag = dayList.includes(timeslotDate);
+                                    console.log("The day is in calendar "+timeslotDate +" "+ dayFlag);
+                                    if (dayFlag == true) {
+                                        var count = 0;
+                                        for (var k = 0; k < meetingList.length; k++) {
+                                            var meetingDate_String = meetingList[k].meetingDate;
+                                            var meetingStringTemp = meetingDate_String.split("T");
+                                            var meeting_String = meetingStringTemp[0].replace("-", "/");
+                                            var meetingDate = new Date(meeting_String);
+                                            console.log(meetingDate.getDate() == day.getDate());
+                                            console.log(meeting_String);
+                                            console.log(day.getDate())
+                                            if (meetingDate.getDate() == day.getDate()) {
+                                                count++;
+                                                console.log(count);
+                                            }
                                         }
+                                        var cell = document.createElement("td");
+                                        var cellText = document.createTextNode(day.getDate() + "Meeting:" + count);
+                                        cell.appendChild(cellText);
+                                        row.appendChild(cell);
                                     }
-                                    var cell = document.createElement("td");
-                                    var cellText = document.createTextNode(day.getDate() + "Meeting:" + count);
-                                    cell.appendChild(cellText);
-                                    row.appendChild(cell);
+                                    else{
+                                        var cell = document.createElement("td");
+                                        var cellText = document.createTextNode(day.getDate());
+                                        cell.appendChild(cellText);
+                                        row.appendChild(cell);
+                                    }
                                 }
+
                             }
                             day.setDate(day.getDate() + 1);
                         }
@@ -259,6 +272,21 @@ and open the template in the editor.
                 monthlyTable(selectDate);
             }
 
+        }
+
+        function dayConversion(date) {
+            var dd = date.getDate();
+            var mm = date.getMonth() + 1; //January is 0!
+
+            var yyyy = date.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd;
+            }
+            if (mm < 10) {
+                mm = '0' + mm;
+            }
+            var date = mm + '-' + dd + '-' + yyyy;
+            return date;
         }
 
         function pervMonth(e) {
