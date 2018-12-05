@@ -112,6 +112,7 @@ and open the template in the editor.
                     console.log(xhr.responseText);
                     var js = JSON.parse(xhr.responseText);
                     var timeslotList = js.timeSlotsWithMeetings;
+                    console.log("time slot list length "+timeslotList.length)
                     for (var i = 0; i < timeslotList.length; i++) {
                         var row = document.createElement("tr");
                         var cell = document.createElement("td");
