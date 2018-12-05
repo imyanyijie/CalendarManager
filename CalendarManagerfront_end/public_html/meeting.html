@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head
+        <title></title>
+        <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <h1>Create Meeting</h1>>
+</head>
+
+<body>
+
+    <form name = "createMeeting" method = "post">
+        Meeting Name <input name = "meetingName" value = "" /><br>
+        Meeting Location <input name= "meetingLocation" value = "" /><br>
+        Participant <input name = "participant" value = "" /><br>
+        <input type="button" value="Submit" onClick = "JavaScript:handleClick(this)">
+    </form>
+
+
+    <script type = "text/javascript">
+        var createMeeting_url = "https://w1ubov27h1.execute-api.us-east-2.amazonaws.com/stage0";
+        
+        function handleClick(e) {
+            //alert("99");
+            var form = document.createMeeting;
+            var meetingName = form.meetingName.value;
+            var meetingLocation = form.meetingLocation.value;
+            var participant = form.participant.value;
+            var calendarID = sessionStorage.getItem("calendarID");
+            var timeSlotID = sessionStorage.getItem("timeSlotID");
+            var meetingDate = sessionStorage.getItem("meetingDate");
+            console.log(calendarID);
+            var data = {};
+            data["meetingName"] = meetingName;
+            data["meetingLocaion"] = meetingLocation;
+            data["meetingDate"] = meetingDate;
+            data["meetingPerticipent"] = participant;
+            data["calendarID"] = calendarID;
+            data["timeSlotID"] = timeSlotID;
+
+            var js = JSON.stringify(data);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", createMeeting_url, true);
+            xhr.send(js);
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+//                    var obj = JSON.parse(xhr.responseText);
+                    alert(xhr.responseText);
+                    window.location.href = "calendar.html";
+                }
+            };
+        }
+    </script>
+</body>
+</html>

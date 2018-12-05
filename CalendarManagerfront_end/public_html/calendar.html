@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!doctype html>
+<html>
+    <head
+        <title></title>
+        <style>
+            td:hover{background-color:#ddd;;cursor: pointer}
+
+        </style>
+        <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <h1>Calendar Manager</h1>>
+</head>
+
+<body>
+
+    <select id="combo" name="combo" style="width: 100px;"></select>
+
+    <input type="button" value="loadCalendar" onClick = "JavaScript:loadCalendar(this)">
+    <input type="button" value="deleteCalendar" onClick = "JavaScript:deleteCalendar(this)">
+    <input type="button" value="createCalendar" onClick = "JavaScript:transfer()">
+    <input type="button" value="refresh" onClick = "JavaScript:refresh()">
+
+    <p>Calendar Status:</p>
+    <p id ="calendarStatus"></p>
+    <p></p>
+
+    <input type ="button" id ="createMeeting" value="Create Meeting" onclick="JavaScript:addMeeting(this)" disabled="true">
+    <input type ="button" id ="deleteMeeting" value="Delete Meeting" onclick="JavaScript:deleteMeeting(this)" disabled="true">
+    <p></p>
+    <input type ="button" id ="monthlyView" value="Monthly View" onclick="JavaScript:monthlyView(this)" disabled="true">
+    <p id="Month"></p>
+    <p></p>
+    <input type ="button" id ="nextMonth" value="Next Month" onclick="JavaScript:nextMonth(this)" disabled="true">
+    <input type ="button" id ="pervMonth" value="Pervious Month" onclick="JavaScript:pervMonth(this)" disabled="true">
+    <div>
+        <table id ="CalendarView" border="1">
+        </table>
+        <p></p>
+    </div>
+
+    <table id ="DailyView" border="1">
+    </table>
+
+    <script type = "text/javascript">
+        var loadCalendar_url = "https://qftw1j6o0e.execute-api.us-east-2.amazonaws.com/stage1?calendarID=";
+        var deleteCalendar_url = "https://7q7ae3d178.execute-api.us-east-2.amazonaws.com/stage0";
+        var loadAllCalendar_url = "https://4z45ia0usb.execute-api.us-east-2.amazonaws.com/stage0";
+        var deleteMeeting_url = "https://yavf28i8uc.execute-api.us-east-2.amazonaws.com/stage0";
+        var calendarView_url = "https://3khvkcbdbe.execute-api.us-east-2.amazonaws.com/stage0";
+
+        var calendarID;
+        var _startDate;
+        var _endDate;
+        var _selectDate;
+        var _timeslotID;
+        var _meetingID;
+        var _currentDate;
+
+        function refresh() {
+            document.getElementById('combo').innerText = null
+            document.getElementById('combo').innerText = null
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", loadAllCalendar_url, true);
+            xhr.send();
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    var js = JSON.parse(xhr.responseText);
+                    calendarList_asString = js.CalendarList;
+                    calendarList_asString = calendarList_asString.replace("\\", "");
+                    var list = JSON.parse(calendarList_asString);
+                    for (var i = 0; i < list.length; i++) {
+                        var option = document.createElement("option");
+                        option.text = list[i].calendarName;
+                        option.value = list[i].calendarID;
+
+                        var combo = document.getElementById("combo");
+                        try {
+                            combo.add(option, null); //Standard 
+                        } catch (error) {
+                            combo.add(option); // IE only
+                        }
+                    }
+                }
+            }
+        }
+
+        function dailyView(selectDay) {
+            document.getElementById("DailyView").innerHTML = "";
+            var selectedDate = new Date(selectDay);
+            var slMonth = selectedDate.getMonth() + 1;
+            var slYear = selectedDate.getYear() + 1900;
+            var slDay = selectedDate.getDate();
+
+            var table = document.getElementById("DailyView"), rIndex, cIndex;
+            var tblBody = document.createElement("tbody");
+            var header = table.createTHead();
+            var row = header.insertRow(0);
+            var cell = row.insertCell(0);
+            cell.innerHTML = "<b>" + selectDay + "</b>";
+
+            var loadView_url = calendarView_url + "?calendarID=" + calendarID + "&date=" + slYear + "" + slMonth + "" + slDay;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", loadView_url, true);
+            xhr.send();
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    console.log(xhr.responseText);
+                    var js = JSON.parse(xhr.responseText);
+                    var timeslotList = js.timeSlotsWithMeetings;
+                    for (var i = 0; i < timeslotList.length; i++) {
+                        var row = document.createElement("tr");
+                        var cell = document.createElement("td");
+                        var cellText = document.createTextNode(JSON.stringify(timeslotList[i]));
+                        cell.appendChild(cellText);
+                        row.appendChild(cell);
+                        tblBody.appendChild(row);
+                    }
+                    table.appendChild(tblBody);
+
+
+                    for (var i = 1; i < table.rows.length; i++)
+                    {
+                        // row cells
+                        for (var j = 0; j < table.rows[i].cells.length; j++)
+                        {
+                            table.rows[i].cells[j].onclick = function ()
+                            {
+                                rIndex = this.parentElement.rowIndex;
+                                cIndex = this.cellIndex + 1;
+                                var value = table.rows[rIndex].cells[cIndex - 1].innerHTML;
+                                var selectItem = JSON.parse(value);
+                                console.log(selectItem.timeslotID);
+                                console.log(selectItem.date);
+                                _meetingID = selectItem.meetingID;
+                                _timeslotID = selectItem.timeslotID;
+                                _selectDate = selectItem.date
+                                document.getElementById("createMeeting").disabled = false;
+                                document.getElementById("deleteMeeting").disabled = false;
+
+
+                            };
+                        }
+                    }
+                }
+            };
+
+        }
+
+
+        function monthlyTable(selectedDate) {
+            document.getElementById("CalendarView").innerHTML = "";
+            document.getElementById("DailyView").innerHTML = "";
+            var startDay = new Date(selectedDate);
+            var startMonth = startDay.getMonth() + 1;
+            var startYear = startDay.getYear() + 1900;
+            var startday = startDay.getDate();
+            document.getElementById("Month").innerHTML = startMonth + "/" + startYear;
+            var loadView_url = calendarView_url + "?calendarID=" + calendarID + "&date=" + startYear + "" + startMonth + "00";
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", loadView_url, true);
+            xhr.send();
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    console.log(xhr.responseText);
+                    var js = JSON.parse(xhr.responseText);
+                    var meetingList = js.meetings;
+                    var dayList = js.day;
+                    console.log(meetingList[0]);
+                    console.log(dayList.length);
+
+                    var maxDay = daysInMonth(startMonth, startYear);
+                    var table = document.getElementById("CalendarView"), rIndex, cIndex;
+                    var tblBody = document.createElement("tbody");
+                    var header = table.createTHead();
+                    var row = header.insertRow(0);
+                    var cell = row.insertCell(0);
+                    cell.innerHTML = "<b>Monday</b>";
+                    var cell = row.insertCell(1);
+                    cell.innerHTML = "<b>Tuesday</b>";
+                    var cell = row.insertCell(2);
+                    cell.innerHTML = "<b>Wednesday</b>";
+                    var cell = row.insertCell(3);
+                    cell.innerHTML = "<b>Thursday</b>";
+                    var cell = row.insertCell(4);
+                    cell.innerHTML = "<b>Friday</b>";
+                    var elipse = parseInt((maxDay - startday) / 7);
+
+                    console.log("the number of row is " + elipse);
+                    var day = startDay;
+                    for (var i = 0; i <= elipse; i++) {
+                        var row = document.createElement("tr");
+                        for (var j = 0; j < 7; j++) {
+                            var comparetorDay = parseInt(day.getDay() % 7)
+                            if (comparetorDay !== 0) {
+                                if (comparetorDay !== 6) {
+                                    var count = 0;
+                                    for (var k = 0; k < meetingList.length; k++) {
+                                        var meetingDate_String = meetingList[k].meetingDate;
+                                        var meetingStringTemp = meetingDate_String.split("T");
+                                        var meeting_String = meetingStringTemp[0].replace("-", "/");
+                                        var meetingDate = new Date(meeting_String);
+                                        console.log(meetingDate.getDate() == day.getDate());
+                                        console.log(meeting_String);
+                                        console.log(day.getDate())
+                                        if (meetingDate.getDate() == day.getDate()) {
+                                            count++;
+                                            console.log(count);
+                                        }
+                                    }
+                                    var cell = document.createElement("td");
+                                    var cellText = document.createTextNode(day.getDate() + "Meeting:" + count);
+                                    cell.appendChild(cellText);
+                                    row.appendChild(cell);
+                                }
+                            }
+                            day.setDate(day.getDate() + 1);
+                        }
+                        // add the row to the end of the table body
+                        tblBody.appendChild(row);
+                    }
+                }
+                table.appendChild(tblBody);
+
+                for (var i = 1; i < table.rows.length; i++) {
+                    for (var j = 0; j < table.rows[i].cells.length; j++) {
+                        table.rows[i].cells[j].onclick = function () {
+                            rIndex = this.parentElement.rowIndex;
+                            cIndex = this.cellIndex + 1;
+                            var value = table.rows[rIndex].cells[cIndex - 1].innerHTML;
+                            var temp = value.split("Meeting:");
+                            var daySelect = new Date(startMonth + "-" + temp[0] + "-" + startYear);
+                            dailyView(daySelect);
+
+
+                        };
+                    }
+                }
+            };
+        }
+
+        function monthlyView(e) {
+            _currentDate = _startDate;
+            var selectDate = _currentDate;
+            monthlyTable(selectDate);
+        }
+
+        function nextMonth(e) {
+            var tempDate = new Date(_currentDate);
+            var endDat = new Date(_endDate);
+            if (tempDate.getMonth() < endDat.getMonth())
+            {
+                tempDate.setMonth(tempDate.getMonth() + 1);
+                var selectDate = tempDate.toDateString();
+                monthlyTable(selectDate);
+            }
+
+        }
+
+        function pervMonth(e) {
+            var tempDate = new Date(_currentDate);
+            var startDat = new Date(_startDate);
+            if (tempDate.getMonth() > startDat.getMonth())
+            {
+                tempDate.setMonth(tempDate.getMonth() + 1);
+                var selectDate = tempDate.toDateString();
+                monthlyTable(selectDate);
+            }
+        }
+
+        function daysInMonth(iMonth, iYear) {
+            return 32 - new Date(iYear, iMonth, 32).getDate();
+        }
+
+        function loadCalendar(e) {
+            var selectCtrl = document.getElementById("combo");
+            var id = selectCtrl.options[selectCtrl.selectedIndex];
+            load_url = loadCalendar_url + id.value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", load_url, true);
+            xhr.send();
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+
+                    document.getElementById("monthlyView").disabled = false;
+                    document.getElementById("nextMonth").disabled = false;
+                    document.getElementById("pervMonth").disabled = false;
+                    console.log(xhr.responseText)
+                    var js = JSON.parse(xhr.responseText);
+                    calendarID = js.calendarID;
+                    var calendarStatusJS = js.CalendarStatus;
+                    var calendarStatus = JSON.parse(calendarStatusJS);
+                    document.getElementById("calendarStatus").innerHTML = "\nCalendarName: " + calendarStatus.calendarName + "\nStart Date: " + calendarStatus.startDate + "\nEnd Date: "
+                            + calendarStatus.endDate + "\nStart Hour: " + calendarStatus.startHour + "\nEnd Hour: " + calendarStatus.endHouar + "\nDuration:" + calendarStatus.duration;
+                    _startDate = calendarStatus.startDate;
+                    _endDate = calendarStatus.endDate;
+                }
+            };
+        }
+
+        function deleteCalendar(e) {
+            var index = document.getElementById("combo").selectedIndex;
+            var calendarID = document.getElementById("combo").options[index].text;
+            var data = {};
+            data["calendarID"] = calendarID;
+            var js = JSON.stringify(data);
+            var xhr = new XMLHttpRequest();
+            document.getElementById("combo").remove(index);
+            xhr.open("POST", deleteCalendar_url, true);
+            xhr.send(js);
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    alart(xhr.responseText);
+                }
+            };
+        }
+
+        function transfer() {
+            window.location.href = "calendarPanel.html";
+        }
+
+        function addMeeting(e) {
+            if (typeof (Storage) !== "undefined") {
+                // Store
+                console.log("calendarID is " + calendarID);
+                sessionStorage.setItem("calendarID", calendarID);
+                sessionStorage.setItem("timeSlotID", _timeslotID);
+                sessionStorage.setItem("meetingDate", _selectDate);
+                window.location.href = "meeting.html";
+            } else {
+                alert("Sorry, your browser does not support Web Storage...");
+            }
+        }
+
+        function deleteMeeting(e) {
+            var data = {};
+            data["meetingID"] = _meetingID;
+            data["timeslotID"] = _timeslotID;
+            console.log(_meetingID);
+            console.log(_timeslotID);
+            var js = JSON.stringify(data);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", deleteMeeting_url, true);
+            xhr.send(js);
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    console.log(xhr.responseText);
+
+                }
+            };
+        }
+    </script>
+</body>
+</html>

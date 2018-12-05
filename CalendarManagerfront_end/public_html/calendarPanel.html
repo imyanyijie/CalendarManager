@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!doctype html>
+<html>
+    <head>
+        <title>Create Calendar</title>
+
+
+        <script type = "text/javascript">
+            var url = "https://4z45ia0usb.execute-api.us-east-2.amazonaws.com/stage0";
+            function handleClick(e) {
+                //alert("99");
+                var form = document.createCalendar;
+
+                var startDay = form.SD.value;
+                var endDay = form.ED.value;
+                var earlistHour = form.EH.value;
+                var latestHour = form.LH.value;
+                var calendarName = form.CN.value;
+                var duration = form.DR.value;
+
+
+                var data = {};
+
+                data["startDate"] = startDay;
+                data["endDate"] = endDay;
+                data["startHour"] = earlistHour;
+                data["endHour"] = latestHour;
+                data["calendarName"] = calendarName;
+                data["duration"] = duration;
+
+
+
+                var js = JSON.stringify(data);
+                //alert(js);
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", url, true);
+                xhr.send(js);
+                xhr.onloadend = function () {
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        var obj = JSON.parse(xhr.responseText);
+                        alert(xhr.responseText);
+                        //updateHistory(xhr.responseText);
+                        window.location.href = "calendar.html";
+
+                    }
+
+                }
+
+            }
+
+
+        </script>
+    </head>
+
+    <body>
+        <form name = "createCalendar" method = "post">
+            startingDate(Please enter in the correct format): <input name = "SD" value = ""  placeholder="MM-dd-yyyy"/><br>
+            endindDate(Please enter in the correct format): <input name= "ED" value = "" placeholder="MM-dd-yyyy"/><br>
+            earlistHour: <input name = "EH" value = "" /><br>
+            latestHour: <input name="LH" value = "" /><br>
+            calendarName: <input name= "CN" value = "" /><br>
+            duration: <input name= "DR" value = "" /><br>
+            <input type="button" value="Submit" onClick = "JavaScript:handleClick(this)">
+        </form>
+        <h1>result</h1>
+        <div id = "history"></div>
+    </body>
+</html>
