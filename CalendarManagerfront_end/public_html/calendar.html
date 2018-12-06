@@ -31,9 +31,16 @@ and open the template in the editor.
 
     <input type ="button" id ="createMeeting" value="Create Meeting" onclick="JavaScript:addMeeting(this)" disabled="true">
     <input type ="button" id ="deleteMeeting" value="Delete Meeting" onclick="JavaScript:deleteMeeting(this)" disabled="true">
+    <p id="Month"></p>
     <p></p>
     <input type ="button" id ="monthlyView" value="Monthly View" onclick="JavaScript:monthlyView(this)" disabled="true">
-    <p id="Month"></p>
+    <input type ="button" id ="clostTimeslot" value="Close Time slot" onclick="JavaScript:closeTimeslot(this)" disabled="true">
+    <select id="closeFlag" name="timeslot" style="width: 100px;">
+        <option value="dayClose">Close the Whole Day</option>
+        <option value="slotClose" selected="selected">Close This Time Slot Only</option>
+        <option value="slotDayClose">Close This Time Slot for EveryDay</option>
+        <option value="dayWeekClose">Close This Day for Every Week</option>
+    </select>
     <p></p>
     <input type ="button" id ="nextMonth" value="Next Month" onclick="JavaScript:nextMonth(this)" disabled="true">
     <input type ="button" id ="pervMonth" value="Pervious Month" onclick="JavaScript:pervMonth(this)" disabled="true">
@@ -52,6 +59,7 @@ and open the template in the editor.
         var loadAllCalendar_url = "https://4z45ia0usb.execute-api.us-east-2.amazonaws.com/stage0";
         var deleteMeeting_url = "https://yavf28i8uc.execute-api.us-east-2.amazonaws.com/stage0";
         var calendarView_url = "https://3khvkcbdbe.execute-api.us-east-2.amazonaws.com/stage0";
+        var closeTimeSlot_url = "";
 
         var calendarID;
         var _startDate;
@@ -94,7 +102,7 @@ and open the template in the editor.
             var selectedDate = new Date(selectDay);
             var slMonth = selectedDate.getMonth() + 1;
             var slYear = selectedDate.getYear() + 1900;
-            var slDay = selectedDate.getDate();
+            var slDay = ("0" + selectedDate.getDate()).slice(-2);
 
             var table = document.getElementById("DailyView"), rIndex, cIndex;
             var tblBody = document.createElement("tbody");
@@ -112,7 +120,7 @@ and open the template in the editor.
                     console.log(xhr.responseText);
                     var js = JSON.parse(xhr.responseText);
                     var timeslotList = js.timeSlotsWithMeetings;
-                    console.log("time slot list length "+timeslotList.length)
+                    console.log("time slot list length " + timeslotList.length)
                     for (var i = 0; i < timeslotList.length; i++) {
                         var row = document.createElement("tr");
                         var cell = document.createElement("td");
@@ -191,9 +199,9 @@ and open the template in the editor.
                     var cell = row.insertCell(4);
                     cell.innerHTML = "<b>Friday</b>";
                     var elipse = parseInt((maxDay - startday) / 7);
-                    
+
                     var day = new Date(startDay);
-                    console.log("start day is "+day);
+                    console.log("start day is " + day);
                     for (var i = 0; i <= elipse; i++) {
                         var row = document.createElement("tr");
                         for (var j = 0; j < 7; j++) {
@@ -202,7 +210,7 @@ and open the template in the editor.
                                 if (comparetorDay !== 6) {
                                     var timeslotDate = dayConversion(day);
                                     var dayFlag = dayList.includes(timeslotDate);
-                                    console.log("The day is in calendar "+timeslotDate +" "+ dayFlag);
+                                    console.log("The day is in calendar " + timeslotDate + " " + dayFlag);
                                     if (dayFlag == true) {
                                         var count = 0;
                                         for (var k = 0; k < meetingList.length; k++) {
@@ -222,8 +230,7 @@ and open the template in the editor.
                                         var cellText = document.createTextNode(day.getDate() + "Meeting:" + count);
                                         cell.appendChild(cellText);
                                         row.appendChild(cell);
-                                    }
-                                    else{
+                                    } else {
                                         var cell = document.createElement("td");
                                         var cellText = document.createTextNode(day.getDate());
                                         cell.appendChild(cellText);
@@ -381,6 +388,10 @@ and open the template in the editor.
 
                 }
             };
+        }
+        
+        function closeTimeSlot(e){
+            
         }
     </script>
 </body>

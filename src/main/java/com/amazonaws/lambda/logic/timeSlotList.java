@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -49,8 +51,8 @@ public class timeSlotList {
 					date = date.withHourOfDay(startHour);
 					for (int i = 0; i < duration_inLoops; i++) {
 						String date_asString = date.toString(dfTimeSlot);
-						aviliableTimeSlotModel timeslot = new aviliableTimeSlotModel(date_asString, calendarID, 0); // open
-																													// timeslot
+						aviliableTimeSlotModel timeslot = new aviliableTimeSlotModel(date_asString, calendarID, 0); // open timeslot
+																													 
 						persistance.addTimeSlot(calendarID, timeslot);
 						date = date.plusMinutes(duration);
 					}
@@ -79,6 +81,44 @@ public class timeSlotList {
 		dayList.clear();
 		dayList.addAll(hs);
 		return dayList;
+	}
+	
+	public void closeTimeslot(int calendarID,int timeslotID,String date, String type) throws Exception{
+		List<aviliableTimeSlotModel> timeslotList = persistance.getAllTimeslot(calendarID);
+		if(type.equals(Setting.closeTimeslot)) {
+			persistance.setTimeslotStatus(timeslotID, 2);
+		}
+		else if(type.equals(Setting.closeDay)) {
+			for(aviliableTimeSlotModel timeslot: timeslotList) {
+				String tempDay = timeslot.getDate();
+				if(tempDay.contains(date)) {
+					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
+				}
+			}
+			
+		}
+		else if(type.equals(Setting.closeTimeslotDay)) {
+			for(aviliableTimeSlotModel timeslot: timeslotList) {
+				String tempDay = timeslot.getDate();
+				if(tempDay.contains(date)) {
+					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
+				}
+			}
+			
+		}
+		else if(type.equals(Setting.closeWeekDay)){
+			DateTime dayDate = dfDay.parseDateTime(date);
+			for(aviliableTimeSlotModel timeslot: timeslotList) {
+				String tempDay_asString = timeslot.getDate();
+				DateTime tempDay_date = dfTimeSlot.parseDateTime(tempDay_asString);
+				if(dayDate.getDayOfWeek() == tempDay_date.getDayOfWeek()) {
+					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
+				}
+			}
+		}
+		else {
+			throw new RuntimeErrorException(null);
+		}
 	}
 
 }
