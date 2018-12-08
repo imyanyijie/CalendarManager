@@ -91,7 +91,9 @@ public class timeSlotList {
 		else if(type.equals(Setting.closeDay)) {
 			for(aviliableTimeSlotModel timeslot: timeslotList) {
 				String tempDay = timeslot.getDate();
-				if(tempDay.contains(date)) {
+				DateTime tempDate = dfTimeSlot.parseDateTime(date);
+				String inputDate = dfDay.print(tempDate);
+				if(tempDay.contains(inputDate)) {
 					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
 				}
 			}
@@ -100,7 +102,9 @@ public class timeSlotList {
 		else if(type.equals(Setting.closeTimeslotDay)) {
 			for(aviliableTimeSlotModel timeslot: timeslotList) {
 				String tempDay = timeslot.getDate();
-				if(tempDay.contains(date)) {
+				DateTime tempDate = dfTimeSlot.parseDateTime(date);
+				String inputDate = dfHour.print(tempDate);
+				if(tempDay.contains(inputDate)) {
 					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
 				}
 			}

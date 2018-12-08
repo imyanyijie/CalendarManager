@@ -34,12 +34,12 @@ and open the template in the editor.
     <p id="Month"></p>
     <p></p>
     <input type ="button" id ="monthlyView" value="Monthly View" onclick="JavaScript:monthlyView(this)" disabled="true">
-    <input type ="button" id ="clostTimeslot" value="Close Time slot" onclick="JavaScript:closeTimeslot(this)" disabled="true">
+    <input type ="button" id ="clostTimeslot" value="Close Time slot" onclick="JavaScript:closeTimeSlot(this)" disabled="true">
     <select id="closeFlag" name="timeslot" style="width: 100px;">
-        <option value="dayClose">Close the Whole Day</option>
-        <option value="slotClose" selected="selected">Close This Time Slot Only</option>
-        <option value="slotDayClose">Close This Time Slot for EveryDay</option>
-        <option value="dayWeekClose">Close This Day for Every Week</option>
+        <option value="closeDay">Close the Whole Day</option>
+        <option value="closeTimeslot" selected="selected">Close This Time Slot Only</option>
+        <option value="closeTimeslotDay">Close This Time Slot for EveryDay</option>
+        <option value="closeWeekDay">Close This Day for Every Week</option>
     </select>
     <p></p>
     <input type ="button" id ="nextMonth" value="Next Month" onclick="JavaScript:nextMonth(this)" disabled="true">
@@ -59,7 +59,7 @@ and open the template in the editor.
         var loadAllCalendar_url = "https://4z45ia0usb.execute-api.us-east-2.amazonaws.com/stage0";
         var deleteMeeting_url = "https://yavf28i8uc.execute-api.us-east-2.amazonaws.com/stage0";
         var calendarView_url = "https://3khvkcbdbe.execute-api.us-east-2.amazonaws.com/stage0";
-        var closeTimeSlot_url = "";
+        var closeTimeSlot_url = "https://kq6k3pxlch.execute-api.us-east-2.amazonaws.com/stage0";
 
         var calendarID;
         var _startDate;
@@ -139,6 +139,7 @@ and open the template in the editor.
                         {
                             table.rows[i].cells[j].onclick = function ()
                             {
+                                document.getElementById("clostTimeslot").disabled = false;
                                 rIndex = this.parentElement.rowIndex;
                                 cIndex = this.cellIndex + 1;
                                 var value = table.rows[rIndex].cells[cIndex - 1].innerHTML;
@@ -389,9 +390,30 @@ and open the template in the editor.
                 }
             };
         }
-        
-        function closeTimeSlot(e){
+
+        function closeTimeSlot(e) {
+            var data = {};
+            var selectCtrl = document.getElementById("closeFlag");
+            var id = selectCtrl.options[selectCtrl.selectedIndex];
+            data["calendarID"] = calendarID+"";
+            data["timeSlotID"] = _timeslotID+"";
+            data["date"] = _selectDate+"";
+            data["type"] = id.value+"";
+            console.log("Close time slot"+calendarID);
+            console.log("Close time slot"+_timeslotID);
+            console.log("Close time slot"+_selectDate);
+            console.log("Close time slot"+id.value);
             
+            var js = JSON.stringify(data);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", closeTimeSlot_url, true);
+            xhr.send(js);
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    alert(xhr.responseText);
+
+                }
+            };
         }
     </script>
 </body>

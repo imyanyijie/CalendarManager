@@ -1,6 +1,8 @@
 package com.amazonaws.lambda.demo;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -13,7 +15,8 @@ import com.amazonaws.services.lambda.runtime.Context;
  */
 public class CloseTimeSlotHandlerTest {
 
-    private static Object input;
+	private static InputStream input;
+    private static OutputStream output;
 
     @BeforeClass
     public static void createInput() throws IOException {
@@ -35,9 +38,13 @@ public class CloseTimeSlotHandlerTest {
         CloseTimeSlotHandler handler = new CloseTimeSlotHandler();
         Context ctx = createContext();
 
-        String output = handler.handleRequest(input, ctx);
-
-        // TODO: validate output here if needed.
-        Assert.assertEquals("Hello from Lambda!", output);
+        try {
+  			handler.handleRequest(input,output, ctx);
+  		} catch (IOException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  		}
+          // TODO: validate output here if needed.
+          Assert.assertEquals("Hello from Lambda!", output);
     }
 }
