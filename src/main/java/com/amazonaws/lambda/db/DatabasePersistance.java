@@ -217,7 +217,7 @@ public class DatabasePersistance {
 	// remove a timeslot from the calendar
 	public boolean removeTimeSlot(int timeslotID) throws Exception {
 		try {
-			PreparedStatement ps = conn.prepareStatement("DELETE FROM AviliableTimeSlot WHERE timeslotID = ?;");
+			PreparedStatement ps = conn.prepareStatement("DELETE FROM avilableTimeSlot WHERE timeSlotID = ?;");
 			ps.setInt(1, timeslotID);
 			int numAffected = ps.executeUpdate();
 			ps.close();

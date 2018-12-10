@@ -15,6 +15,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.amazonaws.lambda.db.DatabasePersistance;
+import com.amazonaws.lambda.model.CalendarModel;
 import com.amazonaws.lambda.model.aviliableTimeSlotModel;
 
 public class timeSlotList {
@@ -51,16 +52,19 @@ public class timeSlotList {
 					date = date.withHourOfDay(startHour);
 					for (int i = 0; i < duration_inLoops; i++) {
 						String date_asString = date.toString(dfTimeSlot);
-						aviliableTimeSlotModel timeslot = new aviliableTimeSlotModel(date_asString, calendarID, 0); // open timeslot
-																													 
+						aviliableTimeSlotModel timeslot = new aviliableTimeSlotModel(date_asString, calendarID, 0); // open
+																													// timeslot
+
 						persistance.addTimeSlot(calendarID, timeslot);
 						date = date.plusMinutes(duration);
 					}
 
 				}
+			} else {
+
 			}
 		} catch (Exception ex) {
-			throw new Exception("Failed to create Timeslot " + ex.getMessage());
+			throw new Exception("Failed to create Timeslot " + ex);
 		}
 	}
 
@@ -82,47 +86,73 @@ public class timeSlotList {
 		dayList.addAll(hs);
 		return dayList;
 	}
-	
-	public void closeTimeslot(int calendarID,int timeslotID,String date, String type) throws Exception{
+
+	public void closeTimeslot(int calendarID, int timeslotID, String date, String type) throws Exception {
 		List<aviliableTimeSlotModel> timeslotList = persistance.getAllTimeslot(calendarID);
-		if(type.equals(Setting.closeTimeslot)) {
+		if (type.equals(Setting.closeTimeslot)) {
 			persistance.setTimeslotStatus(timeslotID, 2);
-		}
-		else if(type.equals(Setting.closeDay)) {
-			for(aviliableTimeSlotModel timeslot: timeslotList) {
+		} else if (type.equals(Setting.closeDay)) {
+			for (aviliableTimeSlotModel timeslot : timeslotList) {
 				String tempDay = timeslot.getDate();
 				DateTime tempDate = dfTimeSlot.parseDateTime(date);
 				String inputDate = dfDay.print(tempDate);
-				if(tempDay.contains(inputDate)) {
-					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
+				if (tempDay.contains(inputDate)) {
+					persistance.setTimeslotStatus(timeslot.getTimeSlotID(), 2);
 				}
 			}
-			
-		}
-		else if(type.equals(Setting.closeTimeslotDay)) {
-			for(aviliableTimeSlotModel timeslot: timeslotList) {
+
+		} else if (type.equals(Setting.closeTimeslotDay)) {
+			for (aviliableTimeSlotModel timeslot : timeslotList) {
 				String tempDay = timeslot.getDate();
 				DateTime tempDate = dfTimeSlot.parseDateTime(date);
 				String inputDate = dfHour.print(tempDate);
-				if(tempDay.contains(inputDate)) {
-					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
+				if (tempDay.contains(inputDate)) {
+					persistance.setTimeslotStatus(timeslot.getTimeSlotID(), 2);
 				}
 			}
-			
-		}
-		else if(type.equals(Setting.closeWeekDay)){
+
+		} else if (type.equals(Setting.closeWeekDay)) {
 			DateTime dayDate = dfDay.parseDateTime(date);
-			for(aviliableTimeSlotModel timeslot: timeslotList) {
+			for (aviliableTimeSlotModel timeslot : timeslotList) {
 				String tempDay_asString = timeslot.getDate();
 				DateTime tempDay_date = dfTimeSlot.parseDateTime(tempDay_asString);
-				if(dayDate.getDayOfWeek() == tempDay_date.getDayOfWeek()) {
-					persistance.setTimeslotStatus(timeslot.getTimeSlotID(),2);
+				if (dayDate.getDayOfWeek() == tempDay_date.getDayOfWeek()) {
+					persistance.setTimeslotStatus(timeslot.getTimeSlotID(), 2);
 				}
 			}
-		}
-		else {
+		} else {
 			throw new RuntimeErrorException(null);
 		}
+	}
+
+	public void addDaytoCalendar(int calendarID, String date) throws Exception {
+		CalendarModel calendar = CalendarList.getInstance().getCalendar(calendarID);
+		DateTime dateDay = dfDay.parseDateTime(date);
+		dateDay = dateDay.withHourOfDay(calendar.getStartHour());
+		int duration_inLoops = (calendar.getEndHouar() - calendar.getStartHour()) * 60 / calendar.getDuration();
+		for (int i = 0; i < duration_inLoops; i++) {
+			String date_asString = dateDay.toString(dfTimeSlot);
+			aviliableTimeSlotModel timeslot = new aviliableTimeSlotModel(date_asString, calendarID, 0); // open timeslot
+			persistance.addTimeSlot(calendarID, timeslot);
+			dateDay = dateDay.plusMinutes(calendar.getDuration());
+		}
+
+	}
+
+	public void removeDaytoCalendar(int calendarID, String date) throws Exception {
+		try {
+			DateTime dateDay = dfDay.parseDateTime(date);
+			String year = "" + dateDay.getYear();
+			String month = "" + dateDay.getMonthOfYear();
+			String day = "" + dateDay.getDayOfMonth();
+			List<aviliableTimeSlotModel> timeslotList = persistance.getTimeSlots(calendarID, year, month, day);
+			for (aviliableTimeSlotModel timeslot : timeslotList) {
+				persistance.removeTimeSlot(timeslot.getTimeSlotID());
+			}
+		} catch (Exception ex) {
+			throw new Exception("Failed to remove Timeslot " + ex);
+		}
+
 	}
 
 }
