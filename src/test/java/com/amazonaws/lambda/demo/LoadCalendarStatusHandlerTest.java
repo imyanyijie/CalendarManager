@@ -1,9 +1,12 @@
 package com.amazonaws.lambda.demo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,36 +18,37 @@ import com.amazonaws.services.lambda.runtime.Context;
  */
 public class LoadCalendarStatusHandlerTest {
 
-	private static InputStream input;
-    private static OutputStream output;
-    @BeforeClass
-    public static void createInput() throws IOException {
-        // TODO: set up your sample input object here.
-        input = null;
-    }
+	private TestContext testContext;
+	
+	 public void setUp() throws Exception {
+	       // subject = new ExampleAwsLambdaHandler();  
+	        testContext = new TestContext(){
+	            // implement all methods of this interface and setup your test context. 
+	            // For instance, the function name:
+	            @Override
+	            public String getFunctionName() {
+	                return "ExampleAwsLambda";
+	            }
+	        };
+	    }
+   @Test
+   public void testHandleRequest() throws Exception {
+   	LoadCalendarStatusHandler loadCalendar = new LoadCalendarStatusHandler();
+		JSONObject test = new JSONObject();
+		test.put("calendarID","1");
+		setUp();
+		
+		byte[] data = test.toString().getBytes();
+		InputStream testInput = new ByteArrayInputStream(data);
 
-    private Context createContext() {
-        TestContext ctx = new TestContext();
+		//testInput.read(data);
+		OutputStream testOutput = new ByteArrayOutputStream();
+		//Context testContext = new Context();
+		
 
-        // TODO: customize your context here if needed.
-        ctx.setFunctionName("Your Function Name");
-
-        return ctx;
-    }
-
-    @Test
-    public void testLPCHandler() {
-        LoadCalendarStatusHandler handler = new LoadCalendarStatusHandler();
-        Context ctx = createContext();
-
-        try {
-			handler.handleRequest(input,output, ctx);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-        // TODO: validate output here if needed.
-        Assert.assertEquals("Hello from Lambda!", output);
-    }
+		loadCalendar.handleRequest(testInput, testOutput, testContext);
+		System.out.println(loadCalendar.responseBody.toJSONString());
+	//	assertNotNull(loadCalendar.meetings);
+		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
+	}
 }

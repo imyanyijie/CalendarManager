@@ -1,5 +1,7 @@
 package com.amazonaws.lambda.demo;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,16 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.json.simple.JSONObject;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.amazonaws.services.lambda.runtime.Context;
-
-/**
- * A simple test harness for locally invoking your Lambda function handler.
- */
-public class DeleteMeetingHandlerTest {
+public class CreateCalendarLambdaFunctionHandlerTest {
 
 	private TestContext testContext;
 	
@@ -33,23 +28,27 @@ public class DeleteMeetingHandlerTest {
 	    }
 	@Test
 	public void testHandleRequest() throws Exception {
-		DeleteMeetingHandler deleteMeeting = new DeleteMeetingHandler();
+		CreateCalendarLambdaFunctionHandler calendar = new CreateCalendarLambdaFunctionHandler();
 		JSONObject test = new JSONObject();
 		setUp();
-		test.put("meetingID","1");
-		test.put("timeslotID","2");
+		test.put("calendarName","personal");
+		test.put("startDate","2018/11/29");
+		test.put("endDate","2018/12/14");
+		test.put("startHour","10");
+		test.put("endHour","5");
+		test.put("duration","20");
 		
 		byte[] data = test.toString().getBytes();
 		InputStream testInput = new ByteArrayInputStream(data);
 
 		//testInput.read(data);
-		OutputStream testOutput =new ByteArrayOutputStream();
+		OutputStream testOutput = new ByteArrayOutputStream();
 		//Context testContext = new Context();
 		
-		
-		deleteMeeting.handleRequest(testInput, testOutput, testContext);
-		System.out.println(deleteMeeting.responseBody);
-		//assertNotNull(meeting.insertCal_asJson);
+
+		calendar.handleRequest(testInput, testOutput, testContext);
+		//System.out.println(calendar.insertCal_asJson);
+		assertNotNull(calendar.insertCal_asJson);
 		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 	}
 }

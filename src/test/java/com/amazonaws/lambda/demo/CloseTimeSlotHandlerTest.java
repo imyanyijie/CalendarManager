@@ -1,9 +1,14 @@
 package com.amazonaws.lambda.demo;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,36 +20,43 @@ import com.amazonaws.services.lambda.runtime.Context;
  */
 public class CloseTimeSlotHandlerTest {
 
-	private static InputStream input;
-    private static OutputStream output;
+	private TestContext testContext;
+	
+	 public void setUp() throws Exception {
+	       // subject = new ExampleAwsLambdaHandler();  
+	        testContext = new TestContext(){
+	            // implement all methods of this interface and setup your test context. 
+	            // For instance, the function name:
+	            @Override
+	            public String getFunctionName() {
+	                return "ExampleAwsLambda";
+	            }
+	        };
+	    }
+	@Test
+	public void testHandleRequest() throws Exception {
+		CloseTimeSlotHandler calendar = new CloseTimeSlotHandler();
+		JSONObject test = new JSONObject();
+		JSONObject test2 = new JSONObject();
+		setUp();
+		test.put("calendarID","1");
+		test.put("timeSlotID","2");
+		test.put("date","10");
+		test.put("type","00");
+		
+		test2.put("body","test.toJSONString()");
+		
+		byte[] data = test2.toString().getBytes();
+		InputStream testInput = new ByteArrayInputStream(data);
 
-    @BeforeClass
-    public static void createInput() throws IOException {
-        // TODO: set up your sample input object here.
-        input = null;
-    }
+		//testInput.read(data);
+		OutputStream testOutput = new ByteArrayOutputStream();
+		//Context testContext = new Context();
+		
 
-    private Context createContext() {
-        TestContext ctx = new TestContext();
-
-        // TODO: customize your context here if needed.
-        ctx.setFunctionName("Your Function Name");
-
-        return ctx;
-    }
-
-    @Test
-    public void testCloseTimeSlotHandler() {
-        CloseTimeSlotHandler handler = new CloseTimeSlotHandler();
-        Context ctx = createContext();
-
-        try {
-  			handler.handleRequest(input,output, ctx);
-  		} catch (IOException e) {
-  			// TODO Auto-generated catch block
-  			e.printStackTrace();
-  		}
-          // TODO: validate output here if needed.
-          Assert.assertEquals("Hello from Lambda!", output);
-    }
+		calendar.handleRequest(testInput, testOutput, testContext);
+		//System.out.println(calendar.insertCal_asJson);
+		assertNotNull(calendar.responseBody);
+		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
+	}
 }

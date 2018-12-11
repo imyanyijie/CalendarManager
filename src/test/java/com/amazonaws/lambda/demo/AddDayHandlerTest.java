@@ -1,9 +1,12 @@
 package com.amazonaws.lambda.demo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,36 +18,38 @@ import com.amazonaws.services.lambda.runtime.Context;
  */
 public class AddDayHandlerTest {
 
-	private static InputStream input;
-    private static OutputStream output;
+	private TestContext testContext;
+	
+	 public void setUp() throws Exception {
+	       // subject = new ExampleAwsLambdaHandler();  
+	        testContext = new TestContext(){
+	            // implement all methods of this interface and setup your test context. 
+	            // For instance, the function name:
+	            @Override
+	            public String getFunctionName() {
+	                return "ExampleAwsLambda";
+	            }
+	        };
+	        testContext.setFunctionName("addDay");
+	    }
 
-    @BeforeClass
-    public static void createInput() throws IOException {
-        // TODO: set up your sample input object here.
-        input = null;
-    }
-
-    private Context createContext() {
-        TestContext ctx = new TestContext();
-
-        // TODO: customize your context here if needed.
-        ctx.setFunctionName("Your Function Name");
-
-        return ctx;
-    }
-
-    @Test
-    public void testAddDayHandler() {
-        AddDayHandler handler = new AddDayHandler();
-        Context ctx = createContext();
-
-        try {
-  			handler.handleRequest(input,output, ctx);
-  		} catch (IOException e) {
-  			// TODO Auto-generated catch block
-  			e.printStackTrace();
-  		}
-          // TODO: validate output here if needed.
-          Assert.assertEquals("Hello from Lambda!", output);
-    }
+  @Test
+  public void testReLoadCalendarLambdaFunctionHandler() throws Exception {
+	  AddDayHandler day = new AddDayHandler();
+      JSONObject test = new JSONObject();
+      JSONObject test2 = new JSONObject();
+      test2.put("date","10-22-2018");
+      test2.put("calendarID", "1");
+      test.put("body",test2.toJSONString());
+      
+      setUp();
+      byte[] data = test.toString().getBytes();
+		InputStream testInput = new ByteArrayInputStream(data);
+		
+		
+		OutputStream testOutput= new ByteArrayOutputStream();
+		
+      day.handleRequest(testInput, testOutput, testContext);
+      Assert.assertNotNull(day.responseBody);
+  }
 }
