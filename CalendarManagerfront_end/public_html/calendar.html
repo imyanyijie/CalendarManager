@@ -28,7 +28,11 @@ and open the template in the editor.
     <p>Calendar Status:</p>
     <p id ="calendarStatus"></p>
     <p></p>
-
+    Input Date for Add/Remove: <input id = "addRemoveDay" name = "addRemoveDay" value = "" placeholder="MM-dd-yyyy"/><br>
+    <p>
+        <input type ="button" id ="addDay" value="Add Day" onclick="JavaScript:addDay(this)" disabled="true" >
+        <input type ="button" id ="removeDay" value="Remove Day" onclick="JavaScript:removeDay(this)" disabled="true">
+    </p>
     <input type ="button" id ="createMeeting" value="Create Meeting" onclick="JavaScript:addMeeting(this)" disabled="true">
     <input type ="button" id ="deleteMeeting" value="Delete Meeting" onclick="JavaScript:deleteMeeting(this)" disabled="true">
     <p id="Month"></p>
@@ -60,7 +64,9 @@ and open the template in the editor.
         var deleteMeeting_url = "https://yavf28i8uc.execute-api.us-east-2.amazonaws.com/stage0";
         var calendarView_url = "https://3khvkcbdbe.execute-api.us-east-2.amazonaws.com/stage0";
         var closeTimeSlot_url = "https://kq6k3pxlch.execute-api.us-east-2.amazonaws.com/stage0";
-
+        var addDay_url = "https://t2dlq2v6t2.execute-api.us-east-2.amazonaws.com/stage0";
+        var removeDay_url = "https://usu8bmfgg6.execute-api.us-east-2.amazonaws.com/stage0";
+        
         var calendarID;
         var _startDate;
         var _endDate;
@@ -326,6 +332,9 @@ and open the template in the editor.
                     document.getElementById("monthlyView").disabled = false;
                     document.getElementById("nextMonth").disabled = false;
                     document.getElementById("pervMonth").disabled = false;
+                    document.getElementById("addDay").disabled = false;
+                    document.getElementById("removeDay").disabled = false;
+                    
                     console.log(xhr.responseText)
                     var js = JSON.parse(xhr.responseText);
                     calendarID = js.calendarID;
@@ -395,18 +404,60 @@ and open the template in the editor.
             var data = {};
             var selectCtrl = document.getElementById("closeFlag");
             var id = selectCtrl.options[selectCtrl.selectedIndex];
-            data["calendarID"] = calendarID+"";
-            data["timeSlotID"] = _timeslotID+"";
-            data["date"] = _selectDate+"";
-            data["type"] = id.value+"";
-            console.log("Close time slot"+calendarID);
-            console.log("Close time slot"+_timeslotID);
-            console.log("Close time slot"+_selectDate);
-            console.log("Close time slot"+id.value);
-            
+            data["calendarID"] = calendarID + "";
+            data["timeSlotID"] = _timeslotID + "";
+            data["date"] = _selectDate + "";
+            data["type"] = id.value + "";
+            console.log("Close time slot" + calendarID);
+            console.log("Close time slot" + _timeslotID);
+            console.log("Close time slot" + _selectDate);
+            console.log("Close time slot" + id.value);
+
             var js = JSON.stringify(data);
             var xhr = new XMLHttpRequest();
             xhr.open("POST", closeTimeSlot_url, true);
+            xhr.send(js);
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    alert(xhr.responseText);
+
+                }
+            };
+        }
+
+        function addDay(e) {
+            var data = {};
+            var date = document.getElementById("addRemoveDay").value;
+           
+            data["calendarID"] = calendarID + "";
+            data["date"] = date + "";
+            console.log("Close time slot" + calendarID);
+            console.log("Close time slot" + date);
+
+            var js = JSON.stringify(data);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", addDay_url, true);
+            xhr.send(js);
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    alert(xhr.responseText);
+
+                }
+            };
+        }
+
+        function removeDay(e) {
+            var data = {};
+            var date = document.getElementById("addRemoveDay").value;
+           
+            data["calendarID"] = calendarID + "";
+            data["date"] = date + "";
+            console.log("Close time slot" + calendarID);
+            console.log("Close time slot" + date);
+
+            var js = JSON.stringify(data);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", removeDay_url, true);
             xhr.send(js);
             xhr.onloadend = function () {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
