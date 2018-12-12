@@ -173,6 +173,7 @@ and open the template in the editor.
             document.getElementById("DailyView").innerHTML = "";
             var startDay = new Date(selectedDate);
             console.log(startDay);
+            startDay.setDate(1);
             var startMonth = startDay.getMonth() + 1;
             var startYear = startDay.getYear() + 1900;
             var startday = startDay.getDate();
@@ -189,7 +190,7 @@ and open the template in the editor.
                     var dayList = js.day;
                     console.log(meetingList[0]);
                     console.log(dayList.length);
-
+                    
                     var maxDay = daysInMonth(startMonth, startYear);
                     var table = document.getElementById("CalendarView"), rIndex, cIndex;
                     var tblBody = document.createElement("tbody");
@@ -208,11 +209,12 @@ and open the template in the editor.
                     var elipse = parseInt((maxDay - startday) / 7);
 
                     var day = new Date(startDay);
+                    console.log("elipse is "+elipse);
                     console.log("start day is " + day);
                     for (var i = 0; i <= elipse; i++) {
                         var row = document.createElement("tr");
                         for (var j = 0; j < 7; j++) {
-                            var comparetorDay = parseInt(day.getDay() % 7)
+                            var comparetorDay = parseInt(day.getDate() % 7)
                             if (comparetorDay !== 0) {
                                 if (comparetorDay !== 6) {
                                     var timeslotDate = dayConversion(day);
@@ -225,12 +227,8 @@ and open the template in the editor.
                                             var meetingStringTemp = meetingDate_String.split("T");
                                             var meeting_String = meetingStringTemp[0].replace("-", "/");
                                             var meetingDate = new Date(meeting_String);
-                                            console.log(meetingDate.getDate() == day.getDate());
-                                            console.log(meeting_String);
-                                            console.log(day.getDate())
                                             if (meetingDate.getDate() == day.getDate()) {
                                                 count++;
-                                                console.log(count);
                                             }
                                         }
                                         var cell = document.createElement("td");
