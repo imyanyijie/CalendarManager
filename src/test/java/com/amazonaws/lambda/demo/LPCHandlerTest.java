@@ -60,33 +60,11 @@ public class LPCHandlerTest {
 			
 
 			loadCalendar.handleRequest(testInput, testOutput, testContext);
-			System.out.println(loadCalendar.responseJson);
-			System.out.println(loadCalendar.responseBody);
+			System.out.println(testOutput.toString());
+			//System.out.println(loadCalendar.responseBody);
 			
 		//	assertNotNull(loadCalendar.meetings);
 			//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 		}
-	 
-	 @Test 
-	 public void testgetMeetings() {
-		 LPCHandler loadCalendar = new LPCHandler();
-		 List<MeetingModel> meetings = loadCalendar.getMeetings(1, "2018","02","09");
-		 assertNotNull(meetings);
-	 }
-	 
-	 @Test
-	 public void testgetTimeSlots() {
-		 LPCHandler loadCalendar = new LPCHandler();
-		 JSONArray JSONMeetings = new JSONArray();
-		 JSONMeetings = loadCalendar.getTimeSlots(1,"2019","09","21");
-		 assertNotNull(JSONMeetings);
-	 }
-	 
-	 @Test
-	 public void testgetTimeSlotsWithMeetings() {
-		 LPCHandler loadCalendar = new LPCHandler();
-		 JSONArray JSONTimeSlots = new JSONArray();
-		 JSONTimeSlots  = loadCalendar.getTimeSlotsWithMeetings(2, "2018","09", "21");
-		 assertNotNull(JSONTimeSlots );
-	 }
+
 }

@@ -50,6 +50,6 @@ public class AddDayHandlerTest {
 		OutputStream testOutput= new ByteArrayOutputStream();
 		
       day.handleRequest(testInput, testOutput, testContext);
-      Assert.assertNotNull(day.responseBody);
+      Assert.assertNotNull(testOutput.toString());
   }
 }

@@ -48,6 +48,6 @@ public class ReLoadCalendarLambdaFunctionHandlerTest {
 		OutputStream testOutput = new ByteArrayOutputStream();
 		
        handler.handleRequest(testInput, testOutput, testContext);
-       Assert.assertNotNull(handler.reponseJson);
+       Assert.assertNotNull(testOutput.toString());
    }
 }

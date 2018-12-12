@@ -61,7 +61,7 @@ public class RemoveDayHandler implements RequestStreamHandler {
 			try {
 				
 				timeSlotList.getInstance().removeDaytoCalendar(calendarID, date);
-				
+				timeSlotList.getInstance().updateCalendar(calendarID, date);
 				responseBody.put("validation", "success");
 				responseJson = responseCreator("succesful！！", 200, responseJson, responseBody);
 			} catch (Exception ex) {

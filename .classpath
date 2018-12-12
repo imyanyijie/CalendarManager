@@ -34,9 +34,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Java Project/CM/lib/gson-2.6.2.jar"/>
-	<classpathentry kind="lib" path="D:/Java Project/CM/lib/joda-time-2.10.1.jar"/>
-	<classpathentry kind="lib" path="D:/Java Project/CM/lib/json-simple-1.1.jar"/>
-	<classpathentry kind="lib" path="D:/Java Project/CM/lib/mysql-connector-java-5.1.6.jar"/>
+	<classpathentry kind="lib" path="/Users/yijieyan/Desktop/cs509/CalendarManager/lib/gson-2.6.2.jar"/>
+	<classpathentry kind="lib" path="/Users/yijieyan/Desktop/cs509/CalendarManager/lib/joda-time-2.10.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yijieyan/Desktop/cs509/CalendarManager/lib/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/yijieyan/Desktop/cs509/CalendarManager/lib/mysql-connector-java-5.1.6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

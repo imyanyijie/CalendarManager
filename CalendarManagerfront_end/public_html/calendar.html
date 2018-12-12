@@ -278,11 +278,13 @@ and open the template in the editor.
         }
 
         function nextMonth(e) {
+            console.log("currentDate "+_currentDate);
             var tempDate = new Date(_currentDate);
             var endDat = new Date(_endDate);
             if (tempDate.getMonth() < endDat.getMonth())
             {
-                tempDate.setMonth(tempDate.getMonth() + 1);
+                tempDate.setMonth(tempDate.getMonth()+1);
+                _currentDate = tempDate.toDateString();
                 var selectDate = tempDate.toDateString();
                 monthlyTable(selectDate);
             }
@@ -305,11 +307,13 @@ and open the template in the editor.
         }
 
         function pervMonth(e) {
+            console.log("currentDate "+_currentDate);
             var tempDate = new Date(_currentDate);
             var startDat = new Date(_startDate);
             if (tempDate.getMonth() > startDat.getMonth())
             {
-                tempDate.setMonth(tempDate.getMonth() + 1);
+                tempDate.setMonth(tempDate.getMonth() - 1);
+                _currentDate = tempDate.toDateString();
                 var selectDate = tempDate.toDateString();
                 monthlyTable(selectDate);
             }
@@ -360,7 +364,7 @@ and open the template in the editor.
             xhr.send(js);
             xhr.onloadend = function () {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
-                    alart(xhr.responseText);
+                    alert(xhr.responseText);
                 }
             };
         }
@@ -384,8 +388,8 @@ and open the template in the editor.
 
         function deleteMeeting(e) {
             var data = {};
-            data["meetingID"] = _meetingID;
-            data["timeslotID"] = _timeslotID;
+            data["meetingID"] = _meetingID+"";
+            data["timeslotID"] = _timeslotID+"";
             console.log(_meetingID);
             console.log(_timeslotID);
             var js = JSON.stringify(data);

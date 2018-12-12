@@ -48,7 +48,7 @@ public class DeleteMeetingHandlerTest {
 		
 		
 		deleteMeeting.handleRequest(testInput, testOutput, testContext);
-		System.out.println(deleteMeeting.responseBody);
+		System.out.println(testOutput.toString());
 		//assertNotNull(meeting.insertCal_asJson);
 		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 	}

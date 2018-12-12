@@ -112,6 +112,26 @@ public class DatabasePersistance {
 			throw new Exception("Failed to insert Calendar: " + e.getMessage());
 		}
 	}
+	
+	public boolean updateCalendar(CalendarModel calendar) throws Exception {
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"Update Calendar set calendarName=? ,startDate =?,endDate=?,startHour = ?,endHour = ?,duration = ? Where idCalendar = ?;");
+
+			ps.setString(1, calendar.getCalendarName());
+			ps.setString(2, calendar.getStartDate());
+			ps.setString(3, calendar.getEndDate());
+			ps.setInt(4, calendar.getStartHour());
+			ps.setInt(5, calendar.getEndHouar());
+			ps.setInt(6, calendar.getDuration());
+			ps.setInt(7, calendar.getCalendarID());
+			ps.execute();
+			return true;
+
+		} catch (Exception e) {
+			throw new Exception("Failed to insert Calendar: " + e.getMessage());
+		}
+	}
 
 	// add a new meeting to the table
 	public boolean addMeeting(MeetingModel meeting) throws Exception {

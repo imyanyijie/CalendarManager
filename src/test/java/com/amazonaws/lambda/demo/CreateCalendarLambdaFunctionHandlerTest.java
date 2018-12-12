@@ -48,7 +48,7 @@ public class CreateCalendarLambdaFunctionHandlerTest {
 
 		calendar.handleRequest(testInput, testOutput, testContext);
 		//System.out.println(calendar.insertCal_asJson);
-		assertNotNull(calendar.insertCal_asJson);
+		assertNotNull(testOutput.toString());
 		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 	}
 }

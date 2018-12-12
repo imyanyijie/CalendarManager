@@ -51,7 +51,7 @@ public class DPCHandlerTest {
 
 		deleteCalendar.handleRequest(testInput, testOutput, testContext);
 		//System.out.println(deleteCalendar.responseBody);
-		assertNotNull(deleteCalendar.responseBody);
+		assertNotNull(testOutput.toString());
 		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 	}
 }

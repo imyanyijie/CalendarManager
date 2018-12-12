@@ -11,7 +11,7 @@ public class timeSlotListTest {
 	@Test
 	public void testCreateTimeSlot() throws Exception {
 		timeSlotList.getInstance().createTimeSlot(1, "11-01-2018", "11-05-2018", 2, 4, 2);
-		assertNotNull(timeSlotList.res);
+		assertNotNull(timeSlotList.getInstance().getTimeslotByDay(1));
 	}
 	
 	@Test

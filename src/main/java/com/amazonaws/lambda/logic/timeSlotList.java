@@ -154,5 +154,18 @@ public class timeSlotList {
 		}
 
 	}
+	
+	public void updateCalendar(int calendarID, String date) throws Exception {
+		CalendarModel calendar = persistance.getCalendar(calendarID);
+		DateTime dayDate= dfDay.parseDateTime(date);
+		if(dayDate.isBefore(dfDay.parseDateTime(calendar.getStartDate()))) {
+			calendar.setStartDate(date);
+			persistance.updateCalendar(calendar);
+		}
+		if(dayDate.isAfter(dfDay.parseDateTime(calendar.getEndDate()))) {
+			calendar.setEndDate(date);
+			persistance.updateCalendar(calendar);
+		}
+	}
 
 }

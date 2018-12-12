@@ -48,7 +48,7 @@ public class LoadCalendarHandlerTest {
 		
 
 		loadCalendar.handleRequest(testInput, testOutput, testContext);
-		System.out.println(loadCalendar.responseBody);
+		System.out.println(testOutput.toString());
 	//	assertNotNull(loadCalendar.meetings);
 		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 	}

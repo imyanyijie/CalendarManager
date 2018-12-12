@@ -59,7 +59,7 @@ public class AddDayHandler implements RequestStreamHandler {
 			try {
 				
 				timeSlotList.getInstance().addDaytoCalendar(calendarID, date);
-
+				timeSlotList.getInstance().updateCalendar(calendarID, date);
 				responseBody.put("validation", "success");
 				responseJson = responseCreator("succesful！！", 200, responseJson, responseBody);
 			} catch (Exception ex) {

@@ -56,7 +56,7 @@ public class CloseTimeSlotHandlerTest {
 
 		calendar.handleRequest(testInput, testOutput, testContext);
 		//System.out.println(calendar.insertCal_asJson);
-		assertNotNull(calendar.responseBody);
+		assertNotNull(testOutput.toString());
 		//assertEquals("output should be same as input",test.toJSONString(),calendar.insertCal_asJson);
 	}
 }
