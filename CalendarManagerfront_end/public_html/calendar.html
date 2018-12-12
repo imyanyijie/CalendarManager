@@ -214,7 +214,7 @@ and open the template in the editor.
                     for (var i = 0; i <= elipse; i++) {
                         var row = document.createElement("tr");
                         for (var j = 0; j < 7; j++) {
-                            var comparetorDay = parseInt(day.getDate() % 7)
+                            var comparetorDay = parseInt(day.getDay() % 7)
                             if (comparetorDay !== 0) {
                                 if (comparetorDay !== 6) {
                                     var timeslotDate = dayConversion(day);

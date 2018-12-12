@@ -68,16 +68,18 @@ public class timeSlotList {
 		}
 	}
 
-	public List<String> getTimeslotByDay(int calendarID) throws Exception {
+	public List<String> getTimeslotByDay(int calendarID, String date) throws Exception {
 		List<aviliableTimeSlotModel> timeslotList = new ArrayList<aviliableTimeSlotModel>();
 		List<String> dayList = new ArrayList<String>();
 		timeslotList = persistance.getAllTimeslot(calendarID);
-
+		int verMonth = Integer.parseInt(date);
 		for (aviliableTimeSlotModel timeslot : timeslotList) {
 			String timeslot_temp = timeslot.getDate();
 			DateTime day = dfTimeSlot.parseDateTime(timeslot_temp);
-			timeslot_temp = day.toString(dfDay);
-			dayList.add(timeslot_temp);
+			if (day.getMonthOfYear() == verMonth) {
+				timeslot_temp = day.toString(dfDay);
+				dayList.add(timeslot_temp);
+			}
 		}
 
 		Set<String> hs = new HashSet<>();
@@ -154,15 +156,15 @@ public class timeSlotList {
 		}
 
 	}
-	
+
 	public void updateCalendar(int calendarID, String date) throws Exception {
 		CalendarModel calendar = persistance.getCalendar(calendarID);
-		DateTime dayDate= dfDay.parseDateTime(date);
-		if(dayDate.isBefore(dfDay.parseDateTime(calendar.getStartDate()))) {
+		DateTime dayDate = dfDay.parseDateTime(date);
+		if (dayDate.isBefore(dfDay.parseDateTime(calendar.getStartDate()))) {
 			calendar.setStartDate(date);
 			persistance.updateCalendar(calendar);
 		}
-		if(dayDate.isAfter(dfDay.parseDateTime(calendar.getEndDate()))) {
+		if (dayDate.isAfter(dfDay.parseDateTime(calendar.getEndDate()))) {
 			calendar.setEndDate(date);
 			persistance.updateCalendar(calendar);
 		}

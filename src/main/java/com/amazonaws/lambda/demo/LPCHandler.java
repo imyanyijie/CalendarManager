@@ -72,7 +72,7 @@ public class LPCHandler implements RequestStreamHandler {
 			// day 00 means get info of a month, otherwise get info of a day.
 			if (day.equals("00")) {
 				meetings = getMeetings(calendarID, year, month, day);
-				List<String> dayList = timeSlotList.getInstance().getTimeslotByDay(calendarID);
+				List<String> dayList = timeSlotList.getInstance().getTimeslotByDay(calendarID,month);
 				responseBody.put("meetings", meetings);
 				responseBody.put("day", dayList);
 
