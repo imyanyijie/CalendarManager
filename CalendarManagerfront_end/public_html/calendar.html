@@ -66,7 +66,7 @@ and open the template in the editor.
         var closeTimeSlot_url = "https://kq6k3pxlch.execute-api.us-east-2.amazonaws.com/stage0";
         var addDay_url = "https://t2dlq2v6t2.execute-api.us-east-2.amazonaws.com/stage0";
         var removeDay_url = "https://usu8bmfgg6.execute-api.us-east-2.amazonaws.com/stage0";
-        
+
         var calendarID;
         var _startDate;
         var _endDate;
@@ -155,8 +155,11 @@ and open the template in the editor.
                                 _meetingID = selectItem.meetingID;
                                 _timeslotID = selectItem.timeslotID;
                                 _selectDate = selectItem.date
-                                document.getElementById("createMeeting").disabled = false;
-                                document.getElementById("deleteMeeting").disabled = false;
+                                var close = selectItem.timeslotStatus;
+                                if (close == 0) {
+                                    document.getElementById("createMeeting").disabled = false;
+                                    document.getElementById("deleteMeeting").disabled = false;
+                                }
 
 
                             };
@@ -190,7 +193,7 @@ and open the template in the editor.
                     var dayList = js.day;
                     console.log(meetingList[0]);
                     console.log(dayList.length);
-                    
+
                     var maxDay = daysInMonth(startMonth, startYear);
                     var table = document.getElementById("CalendarView"), rIndex, cIndex;
                     var tblBody = document.createElement("tbody");
@@ -209,7 +212,7 @@ and open the template in the editor.
                     var elipse = parseInt((maxDay - startday) / 7);
 
                     var day = new Date(startDay);
-                    console.log("elipse is "+elipse);
+                    console.log("elipse is " + elipse);
                     console.log("start day is " + day);
                     for (var i = 0; i <= elipse; i++) {
                         var row = document.createElement("tr");
@@ -276,12 +279,12 @@ and open the template in the editor.
         }
 
         function nextMonth(e) {
-            console.log("currentDate "+_currentDate);
+            console.log("currentDate " + _currentDate);
             var tempDate = new Date(_currentDate);
             var endDat = new Date(_endDate);
             if (tempDate.getMonth() < endDat.getMonth())
             {
-                tempDate.setMonth(tempDate.getMonth()+1);
+                tempDate.setMonth(tempDate.getMonth() + 1);
                 _currentDate = tempDate.toDateString();
                 var selectDate = tempDate.toDateString();
                 monthlyTable(selectDate);
@@ -305,7 +308,7 @@ and open the template in the editor.
         }
 
         function pervMonth(e) {
-            console.log("currentDate "+_currentDate);
+            console.log("currentDate " + _currentDate);
             var tempDate = new Date(_currentDate);
             var startDat = new Date(_startDate);
             if (tempDate.getMonth() > startDat.getMonth())
@@ -336,7 +339,7 @@ and open the template in the editor.
                     document.getElementById("pervMonth").disabled = false;
                     document.getElementById("addDay").disabled = false;
                     document.getElementById("removeDay").disabled = false;
-                    
+
                     console.log(xhr.responseText)
                     var js = JSON.parse(xhr.responseText);
                     calendarID = js.calendarID;
@@ -386,8 +389,8 @@ and open the template in the editor.
 
         function deleteMeeting(e) {
             var data = {};
-            data["meetingID"] = _meetingID+"";
-            data["timeslotID"] = _timeslotID+"";
+            data["meetingID"] = _meetingID + "";
+            data["timeslotID"] = _timeslotID + "";
             console.log(_meetingID);
             console.log(_timeslotID);
             var js = JSON.stringify(data);
@@ -430,7 +433,7 @@ and open the template in the editor.
         function addDay(e) {
             var data = {};
             var date = document.getElementById("addRemoveDay").value;
-           
+
             data["calendarID"] = calendarID + "";
             data["date"] = date + "";
             console.log("Close time slot" + calendarID);
@@ -451,7 +454,7 @@ and open the template in the editor.
         function removeDay(e) {
             var data = {};
             var date = document.getElementById("addRemoveDay").value;
-           
+
             data["calendarID"] = calendarID + "";
             data["date"] = date + "";
             console.log("Close time slot" + calendarID);
